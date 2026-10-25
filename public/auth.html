@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Pluto (PLT) · Sign in</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Manrope:wght@400;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#000;--panel:#121208;--line:#2a2808;--ink:#f6f3e4;--dim:#8d8a6c;--y:#ffd60a;--y2:#ffb800;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Manrope,sans-serif}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.box{width:100%;max-width:380px;text-align:center}
+.mark{margin:auto;width:108px;height:108px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#292200,#090900 65%);border:1px solid #615000;box-shadow:0 0 36px #ffd60a35;color:var(--y);font:800 29px Unbounded,sans-serif;letter-spacing:-3px}
+.brand{font:700 11px Unbounded,sans-serif;letter-spacing:3px;color:var(--y);margin-top:17px}
+h1{font:700 26px Unbounded,sans-serif;margin:14px 0 8px}p{color:#9a9a9a;font-size:14px;line-height:1.55;margin:0 0 18px}
+.tabs{display:flex;gap:6px;background:#111;border:1px solid #2a2a1a;border-radius:14px;padding:4px;margin-bottom:6px}
+.tabs button{flex:1;border:0;background:transparent;color:#9a9a9a;font:700 14px Manrope,sans-serif;padding:10px;border-radius:10px;cursor:pointer}
+.tabs button.on{background:var(--y);color:#000}
+input{width:100%;padding:14px;margin-top:10px;border-radius:14px;border:1px solid #2a2a1a;background:#111;color:#fff;font:600 15px Manrope,sans-serif}
+.pw{position:relative}.pw button{position:absolute;right:8px;top:18px;border:0;background:none;color:var(--y);font:700 12px Manrope,sans-serif;cursor:pointer}
+.go{width:100%;border:0;background:var(--y);color:#000;font:700 16px Manrope,sans-serif;padding:16px;border-radius:16px;margin-top:14px;cursor:pointer}.go:disabled{opacity:.5}
+.lnk{background:none;border:0;color:var(--y);font:600 13px Manrope,sans-serif;margin-top:14px;cursor:pointer}
+#msg{min-height:20px;margin-top:12px;font-size:13px;color:var(--y)}small{display:block;margin-top:18px;color:#777;font-size:11px;line-height:1.6}
+</style></head><body><main class="box">
+<div class="mark" aria-label="Pluto">PLT</div><div class="brand">PLUTO · PLT</div><h1>Welcome to Pluto</h1><p id="sub">Sign in to start mining.</p>
+<div class="tabs" id="tabs"><button class="on" data-m="in">Sign in</button><button data-m="up">Create account</button></div>
+<input id="em" type="email" placeholder="Email" autocomplete="email" inputmode="email">
+<div class="pw" id="pwbox"><input id="pw" type="password" placeholder="Password (8+ characters)" autocomplete="current-password"><button type="button" id="eye">Show</button></div>
+<div id="msg" role="status" aria-live="polite"></div><button class="go" id="go">Sign in</button>
+<button class="lnk" id="forgot" type="button">Forgot password?</button>
+<small>Points are not tokens. No sale is open and no payments are taken. We never ask for seed phrases or keys.</small>
+</main><script>
+const sb=supabase.createClient('https://ryoxpfiutxjfdjqiixlu.supabase.co','sb_publishable_uUO-gntZTsS_SdY0vTVgEQ_w-BKPZwr');
+let mode='in',recovery=false;const P=new URLSearchParams(location.search),REF=(P.get('ref')||'').slice(0,12),$=id=>document.getElementById(id);
+function say(m){$('msg').textContent=m}
+function setMode(m){mode=m;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));$('go').textContent=m==='in'?'Sign in':'Create account';$('pw').autocomplete=m==='in'?'current-password':'new-password';$('sub').textContent=m==='in'?'Sign in to start mining.':(REF?'Invited with code '+REF+'. Create your account.':'Create your account to start mining.');say('')}
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(b&&!recovery)setMode(b.dataset.m)};
+$('eye').onclick=()=>{const shown=$('pw').type==='password';$('pw').type=shown?'text':'password';$('eye').textContent=shown?'Hide':'Show'};
+function done(){location.replace('index.html')}
+$('go').onclick=async()=>{const em=$('em').value.trim(),pw=$('pw').value,b=$('go');if(recovery){if(pw.length<8)return say('Password needs 8+ characters');b.disabled=true;const u=await sb.auth.updateUser({password:pw});b.disabled=false;if(u.error)return say(u.error.message);return done()}if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))return say('Enter a valid email');if(pw.length<8)return say('Password needs 8+ characters');b.disabled=true;say(mode==='in'?'Signing in…':'Creating account…');const r=mode==='in'?await sb.auth.signInWithPassword({email:em,password:pw}):await sb.auth.signUp({email:em,password:pw,options:{data:{ref:REF},emailRedirectTo:location.href.split('?')[0]}});b.disabled=false;if(r.error)return say(r.error.message);if(mode==='up'&&!r.data.session)return say('Check your email and tap the confirmation link, then sign in.');done()};
+$('forgot').onclick=async()=>{const em=$('em').value.trim();if(!em)return say('Enter your email first');const r=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.href.split('?')[0]});say(r.error?r.error.message:'Reset link sent. Check your email.')};
+sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY'){recovery=true;$('tabs').style.display='none';$('em').style.display='none';$('forgot').style.display='none';$('sub').textContent='Choose a new password.';$('pw').placeholder='New password (8+ characters)';$('pw').autocomplete='new-password';$('go').textContent='Save password'}});
+sb.auth.getSession().then(s=>{if(s.data.session&&!/type=recovery/.test(location.hash))done()});if(REF)setMode('up');
+</script></body></html>
