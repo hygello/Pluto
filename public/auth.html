@@ -27,15 +27,21 @@ input{width:100%;padding:14px;margin-top:10px;border-radius:14px;border:1px soli
 <button class="lnk" id="forgot" type="button">Forgot password?</button>
 <small>Points are not tokens. No sale is open and no payments are taken. We never ask for seed phrases or keys.</small>
 </main><script>
-const sb=supabase.createClient('https://ryoxpfiutxjfdjqiixlu.supabase.co','sb_publishable_uUO-gntZTsS_SdY0vTVgEQ_w-BKPZwr');
-let mode='in',recovery=false;const P=new URLSearchParams(location.search),REF=(P.get('ref')||'').slice(0,12),$=id=>document.getElementById(id);
-function say(m){$('msg').textContent=m}
+(async()=>{
+const $=id=>document.getElementById(id),say=m=>{$('msg').textContent=m};
+async function loadSdk(){for(const url of ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js','https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js']){try{await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=url;s.async=true;s.onload=resolve;s.onerror=()=>{s.remove();reject(Error('SDK source unavailable'))};document.head.appendChild(s)});if(window.supabase?.createClient)return}catch(e){console.warn('[Pluto auth SDK]',e.message)}}throw Error('Could not load account security library. Check your connection and reload.')}
+try{await loadSdk()}catch(e){say(e.message);$('go').disabled=true;return}
+const sb=window.supabase.createClient('https://ryoxpfiutxjfdjqiixlu.supabase.co','sb_publishable_uUO-gntZTsS_SdY0vTVgEQ_w-BKPZwr');
+let mode='in',recovery=false,busy=false;const P=new URLSearchParams(location.search),REF=(P.get('ref')||'').slice(0,12);
 function setMode(m){mode=m;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));$('go').textContent=m==='in'?'Sign in':'Create account';$('pw').autocomplete=m==='in'?'current-password':'new-password';$('sub').textContent=m==='in'?'Sign in to start mining.':(REF?'Invited with code '+REF+'. Create your account.':'Create your account to start mining.');say('')}
-$('tabs').onclick=e=>{const b=e.target.closest('button');if(b&&!recovery)setMode(b.dataset.m)};
-$('eye').onclick=()=>{const shown=$('pw').type==='password';$('pw').type=shown?'text':'password';$('eye').textContent=shown?'Hide':'Show'};
 function done(){location.replace('index.html')}
-$('go').onclick=async()=>{const em=$('em').value.trim(),pw=$('pw').value,b=$('go');if(recovery){if(pw.length<8)return say('Password needs 8+ characters');b.disabled=true;const u=await sb.auth.updateUser({password:pw});b.disabled=false;if(u.error)return say(u.error.message);return done()}if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))return say('Enter a valid email');if(pw.length<8)return say('Password needs 8+ characters');b.disabled=true;say(mode==='in'?'Signing in…':'Creating account…');const r=mode==='in'?await sb.auth.signInWithPassword({email:em,password:pw}):await sb.auth.signUp({email:em,password:pw,options:{data:{ref:REF},emailRedirectTo:location.href.split('?')[0]}});b.disabled=false;if(r.error)return say(r.error.message);if(mode==='up'&&!r.data.session)return say('Check your email and tap the confirmation link, then sign in.');done()};
-$('forgot').onclick=async()=>{const em=$('em').value.trim();if(!em)return say('Enter your email first');const r=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.href.split('?')[0]});say(r.error?r.error.message:'Reset link sent. Check your email.')};
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(b&&!recovery&&!busy&&b.dataset.m)setMode(b.dataset.m)};
+$('eye').onclick=()=>{const shown=$('pw').type==='password';$('pw').type=shown?'text':'password';$('eye').textContent=shown?'Hide':'Show'};
+async function withBusy(button,fn){if(busy)return;busy=true;button.disabled=true;try{await fn()}catch(e){say(e?.message||'Something went wrong. Please try again.');console.error('[Pluto auth]',e)}finally{busy=false;button.disabled=false}}
+$('go').onclick=()=>withBusy($('go'),async()=>{const em=$('em').value.trim(),pw=$('pw').value;if(recovery){if(pw.length<8)return say('Password needs 8+ characters');const u=await sb.auth.updateUser({password:pw});if(u.error)throw u.error;return done()}if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(em))return say('Enter a valid email');if(pw.length<8)return say('Password needs 8+ characters');say(mode==='in'?'Signing in…':'Creating account…');const r=mode==='in'?await sb.auth.signInWithPassword({email:em,password:pw}):await sb.auth.signUp({email:em,password:pw,options:{data:{ref:REF},emailRedirectTo:location.href.split('?')[0]}});if(r.error)throw r.error;if(mode==='up'&&!r.data.session)return say('Check your email and tap the confirmation link, then sign in.');done()});
+$('forgot').onclick=()=>withBusy($('forgot'),async()=>{const em=$('em').value.trim();if(!em)return say('Enter your email first');const r=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.href.split('?')[0]});if(r.error)throw r.error;say('Reset link sent. Check your email.')});
 sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY'){recovery=true;$('tabs').style.display='none';$('em').style.display='none';$('forgot').style.display='none';$('sub').textContent='Choose a new password.';$('pw').placeholder='New password (8+ characters)';$('pw').autocomplete='new-password';$('go').textContent='Save password'}});
-sb.auth.getSession().then(s=>{if(s.data.session&&!/type=recovery/.test(location.hash))done()});if(REF)setMode('up');
+try{const s=await sb.auth.getSession();if(s.error)throw s.error;if(s.data.session&&!/type=recovery/.test(location.hash))done()}catch(e){say('Could not check your sign-in session. '+(e?.message||'Check your connection.'))}
+if(REF)setMode('up');
+})();
 </script></body></html>
