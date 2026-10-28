@@ -169,6 +169,10 @@ nav button.on{color:var(--y)}
 </div>
 <div class="toast" id="toast"></div>
 
+<script>
+/* Keep core navigation alive even if the optional account SDK fails to load. */
+(()=>{const nav=document.getElementById('nav');if(!nav)return;nav.addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b)return;document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('main .view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));});const pad=document.getElementById('pad'),hint=document.getElementById('hint');if(pad&&hint){pad.addEventListener('pointerdown',()=>{hint.textContent='Checking miner connection…';},{passive:true});}window.addEventListener('error',e=>{if(hint&&/supabase|createClient/i.test(String(e.message||'')))hint.textContent='Account service did not load. Refresh the page or try again shortly.';});})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://ryoxpfiutxjfdjqiixlu.supabase.co',SUPABASE_KEY='sb_publishable_uUO-gntZTsS_SdY0vTVgEQ_w-BKPZwr';
