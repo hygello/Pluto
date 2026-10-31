@@ -157,7 +157,7 @@ nav button.on{color:var(--y)}
 var CFG_URL=PLUTO.url,CFG_KEY=PLUTO.key;
 var HOLD=5000,DAY=86400000,ST=null,off=0,pend={},sb=supabase.createClient(CFG_URL,CFG_KEY);
 var REF=(new URLSearchParams(location.search).get('ref')||'').slice(0,12);
-var TASKS=[{id:'checkin',ic:'📅',t:'Daily check-in',wait:1000},{id:'x',ic:'✕',t:'Follow Pluto on X',wait:4000},{id:'tg',ic:'✈️',t:'Join the Telegram',wait:4000},{id:'yt',ic:'▶️',t:'Watch the launch video',wait:6000},{id:'inv',ic:'👥',t:'Invite 3 friends',srv:1},{id:'email',ic:'🛡️',t:'Verify your email',srv:1}];
+var TASKS=[{id:'checkin',ic:'📅',t:'Daily check-in',wait:1000},{id:'x',ic:'✕',t:'Follow Pluto on X',wait:4000},{id:'tg',ic:'✈️',t:'Join the Telegram',wait:4000},{id:'discord',ic:'💬',t:'Join the Discord',wait:4000},{id:'yt',ic:'▶️',t:'Watch the launch video',wait:6000},{id:'inv',ic:'👥',t:'Invite 3 friends',srv:1},{id:'email',ic:'🛡️',t:'Verify your email',srv:1}];
 var LV=[{n:'Cadet',at:0},{n:'Operative',at:2},{n:'Handler',at:4},{n:'Director',at:6}];
 function $(id){return document.getElementById(id)}
 function fmt(n){return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
