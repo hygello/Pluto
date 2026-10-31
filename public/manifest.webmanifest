@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "Pluto (PLT)",
+  "short_name": "Pluto",
+  "description": "Pluto mining and rewards",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#101010",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "/icons/pluto-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/pluto-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
