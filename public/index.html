@@ -210,8 +210,8 @@ function tick(){if(!ST)return;var p=phase(),shown=ST.balance+(ST.mission?accrued
  var dp=p==='mining'?4:2;$('bal').textContent=fmtd(shown,dp);$('s-bal').textContent=fmtd(shown,dp);$('s-rate').textContent=rate();$('s-runs').textContent=ST.runs;
  $('s-tasks').textContent=ST.done.length+'/'+TASKS.length}
 function renderTasks(){if(!ST)return;var b=bmap(),h='';
- TASKS.forEach(function(t){var d=ST.done.indexOf(t.id)>-1,st=d?'done':pend[t.id]==='ready'?'claim':pend[t.id]?'wait':'go';
-  var lbl={done:'Done',claim:'Claim',wait:'Checking…',go:t.srv?'Check':'Start'}[st];
+ TASKS.forEach(function(t){var checkedToday=t.id==='checkin'&&ST.checkin_today,d=ST.done.indexOf(t.id)>-1||checkedToday,st=d?'done':pend[t.id]==='ready'?'claim':pend[t.id]?'wait':'go';
+  var lbl=checkedToday?'Checked in':({done:'Done',claim:'Claim',wait:'Checking…',go:t.srv?'Check':'Start'}[st]);
   h+='<div class="task"><div class="ic">'+t.ic+'</div><div class="tx"><b>'+t.t+'</b><span>+'+b[t.id]+' PLT / hr</span></div><button class="tb '+(st==='go'?'':st)+'" data-id="'+t.id+'" '+(st==='done'||st==='wait'?'disabled':'')+'>'+lbl+'</button></div>'});
  $('tasklist').innerHTML=h;var k='<div class="row"><span>Base speed</span><em>'+ST.base+'</em></div>';
  TASKS.forEach(function(t){if(ST.done.indexOf(t.id)>-1)k+='<div class="row"><span>'+t.t+'</span><em>+'+b[t.id]+'</em></div>'});$('break').innerHTML=k}
