@@ -182,7 +182,7 @@ nav button.on{color:var(--y)}
 <script>
 const SUPABASE_URL='https://ryoxpfiutxjfdjqiixlu.supabase.co',SUPABASE_KEY='sb_publishable_uUO-gntZTsS_SdY0vTVgEQ_w-BKPZwr';
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY),BASE=10,DAY=86400000,HOLD=5000;
-const TASKS=[{id:'checkin',ic:'📅',t:'Daily check-in',b:2,enabled:true},{id:'x',ic:'✕',t:'Follow Pluto on X',url:'https://x.com/pltuniverse?s=11',b:5,enabled:true},{id:'tg',ic:'✈️',t:'Join the Telegram',url:'https://t.me/+mfwxuOMCx5wzMGE0',b:5,enabled:true},{id:'discord',ic:'💬',t:'Join the Discord',url:'https://discord.gg/AdajhDK7p',b:5,enabled:true},{id:'yt',ic:'▶️',t:'Watch the launch video',url:'https://www.youtube.com/@PLTOfficial-1',b:8,enabled:true},{id:'inv',ic:'👥',t:'Invite 3 friends',b:15,enabled:true},{id:'email',ic:'✉️',t:'Verify your email',b:20,enabled:true}];
+const TASKS=[{id:'checkin',ic:'📅',t:'Daily check-in',b:2,enabled:true},{id:'x',ic:'✕',t:'Follow Pluto on X',url:'https://x.com/plt_pluto?s=11',b:5,enabled:true},{id:'tg',ic:'✈️',t:'Join the Telegram',url:'https://t.me/+mfwxuOMCx5wzMGE0',b:5,enabled:true},{id:'discord',ic:'💬',t:'Join the Discord',url:'https://discord.gg/AdajhDK7p',b:5,enabled:true},{id:'yt',ic:'▶️',t:'Watch the launch video',url:'https://www.youtube.com/@PLTOfficial-1',b:8,enabled:true},{id:'inv',ic:'👥',t:'Invite 3 friends',b:15,enabled:true},{id:'email',ic:'✉️',t:'Verify your email',b:20,enabled:true}];
 const LV=[{n:'Cadet',at:0},{n:'Operative',at:2},{n:'Handler',at:4},{n:'Director',at:6}];
 let state=null,session=null,holdStart=0,holdPointerId=null,raf=0,pending=false;
 const $=id=>document.getElementById(id),fmt=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
