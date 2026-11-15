@@ -1,51 +1,49 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pluto PLT — Independent Pre-flight Verification</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pluto PLT — Sponsored Burn</title>
 <style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#090b12;color:#f4f5fa;font:15px system-ui,-apple-system,Segoe UI,sans-serif;display:grid;place-items:center;padding:18px}.panel{width:min(100%,620px);background:#151925;border:1px solid #30384b;border-radius:20px;padding:22px;box-shadow:0 18px 60px #0008}h1{margin:10px 0 6px;font-size:24px}.muted{color:#b9c0d0;line-height:1.5}.pill{display:inline-block;padding:6px 10px;border-radius:99px;background:#302718;color:#ffd47a;font-size:11px;font-weight:800;letter-spacing:.04em}.btn{width:100%;border:0;border-radius:12px;padding:15px;background:#f2c94c;color:#151515;font-weight:800;font-size:16px;margin-top:14px}.btn:disabled{opacity:.55}.row{display:grid;grid-template-columns:minmax(130px, .8fr) minmax(0,1.2fr);gap:12px;padding:12px 0;border-bottom:1px solid #30384b}.row span:first-child{color:#aeb7c9}.value{font-family:ui-monospace,monospace;text-align:right;overflow-wrap:anywhere}.status{margin-top:16px;padding:13px;border-radius:12px;background:#20283a;color:#d9e2f7;white-space:pre-wrap;line-height:1.5}.section{margin-top:20px;font-weight:800}.good{color:#8fe0ad}.bad{color:#ff9a9a}.warn{color:#ffd47a}.small{font-size:12px;color:#9ba5b8;line-height:1.5}.warning{margin-top:18px;border:1px solid #775a2b;background:#2a2115;padding:13px;border-radius:12px;color:#f5d69b;line-height:1.5}
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#090b12;color:#f4f5fa;font:15px system-ui,-apple-system,Segoe UI,sans-serif;display:grid;place-items:center;padding:18px}.panel{width:min(100%,640px);background:#151925;border:1px solid #30384b;border-radius:20px;padding:22px;box-shadow:0 18px 60px #0008}h1{margin:10px 0 6px;font-size:24px}.muted{color:#b9c0d0;line-height:1.5}.pill{display:inline-block;padding:6px 10px;border-radius:99px;background:#302718;color:#ffd47a;font-size:11px;font-weight:800;letter-spacing:.04em}.btn{width:100%;border:0;border-radius:12px;padding:15px;background:#f2c94c;color:#151515;font-weight:800;font-size:15px;margin-top:12px}.btn:disabled{opacity:.4}.row{display:grid;grid-template-columns:minmax(130px,.8fr) minmax(0,1.2fr);gap:12px;padding:11px 0;border-bottom:1px solid #30384b}.row span:first-child{color:#aeb7c9}.value{font-family:ui-monospace,monospace;text-align:right;overflow-wrap:anywhere}.status{margin-top:16px;padding:13px;border-radius:12px;background:#20283a;color:#d9e2f7;white-space:pre-wrap;line-height:1.5}.section{margin-top:20px;font-weight:800}.good{color:#8fe0ad}.bad{color:#ff9a9a}.warn{color:#ffd47a}.small{font-size:12px;color:#9ba5b8;line-height:1.5}.warning{margin-top:18px;border:1px solid #775a2b;background:#2a2115;padding:13px;border-radius:12px;color:#f5d69b;line-height:1.5}
 </style>
 </head>
-<body><main class="panel">
-<span class="pill">READ-ONLY PREFLIGHT · NO TRANSACTION</span>
-<h1>Pluto (PLT) independent verification</h1>
-<p class="muted">This page independently reads the mint account and every PLT token account owned by the connected wallet. It does not create, sign, simulate, or send a transaction.</p>
+<body>
+<main class="panel">
+<span class="pill">PLUTO PLT · TWO-WALLET BURN</span>
+<h1>PLT sponsored burn verification</h1>
+<p class="muted">This tool reads finalized Solana mainnet state, prepares a burn that leaves 3,000,000,000 PLT in the owner wallet, and requires separate owner and sponsor wallet signatures. It will not broadcast until both signatures verify, simulation passes, and the final irreversible action is confirmed.</p>
 <div class="row"><span>PLT mint</span><span class="value">AfrUBKBsrsfFahfGuafChr37tBkkKJpPWdeXj86j2r8m</span></div>
-<div class="row"><span>Expected owner</span><span class="value">7ZPDk8A6ziuKpbfrXnuUUiJ3TP9aFUq5ETAADE6A6sqE</span></div>
-<div class="row"><span>Expected sponsor / fee payer</span><span class="value">4C66bKRcWfXQDaz6Kw32pnz3aiPvN2JrvG9MjDWkar2i</span></div>
-<div class="row"><span>Target remaining</span><span class="value">3,000,000,000 PLT</span></div>
-<div class="row"><span>Proposed burn amount</span><span class="value">299,997,000,000,000 PLT</span></div>
+<div class="row"><span>Owner wallet</span><span class="value">7ZPDk8A6ziuKpbfrXnuUUiJ3TP9aFUq5ETAADE6A6sqE</span></div>
+<div class="row"><span>Sponsor / fee payer</span><span class="value">4C66bKRcWfXQDaz6Kw32pnz3aiPvN2JrvG9MjDWkar2i</span></div>
+<div class="row"><span>Required owner reserve</span><span class="value">3,000,000,000 PLT</span></div>
 <button class="btn" id="connect">Connect owner wallet & verify</button>
-<div class="status" id="status" role="status">Waiting for wallet connection. No wallet action occurs until you tap the button.</div>
+<div class="status" id="status" role="status">Waiting for owner wallet. No transaction exists.</div>
 <div id="details" hidden>
-<div class="section">On-chain account facts</div>
-<div class="row"><span>Connected wallet</span><span class="value" id="wallet"></span></div>
-<div class="row"><span>Mint account owner / token program</span><span class="value" id="program"></span></div>
+<div class="section">Finalized on-chain facts</div>
+<div class="row"><span>Connected owner</span><span class="value" id="wallet"></span></div>
+<div class="row"><span>Token program</span><span class="value" id="program"></span></div>
 <div class="row"><span>Mint authority</span><span class="value" id="mintAuthority"></span></div>
 <div class="row"><span>Freeze authority</span><span class="value" id="freezeAuthority"></span></div>
 <div class="row"><span>Mint supply</span><span class="value" id="supply"></span></div>
 <div class="row"><span>Decimals</span><span class="value" id="decimals"></span></div>
-<div class="row"><span>PLT token accounts found</span><span class="value" id="accountCount"></span></div>
-<div class="row"><span>Total PLT in owner wallet</span><span class="value" id="balance"></span></div>
-<div class="row"><span>Owner token-account check</span><span class="value" id="ownerCheck"></span></div>
-<div class="section">Fee-payer / signing readiness</div>
-<div class="row"><span>Wallet-held reserve</span><span class="value">3,000,000,000 PLT (must remain)</span></div>
-<div class="row"><span>Proposed burn</span><span class="value" id="proposedBurn">Not calculated</span></div>
+<div class="row"><span>Owner token accounts</span><span class="value" id="accountCount"></span></div>
+<div class="row"><span>Owner PLT balance</span><span class="value" id="balance"></span></div>
+<div class="row"><span>Owner account validation</span><span class="value" id="ownerCheck"></span></div>
+<div class="section">Burn transaction</div>
+<div class="row"><span>Exact burn amount</span><span class="value" id="proposedBurn">Not prepared</span></div>
+<div class="row"><span>Owner balance after burn</span><span class="value" id="remaining">3,000,000,000 PLT target</span></div>
 <div class="row"><span>Owner token account</span><span class="value" id="tokenAccount">Not selected</span></div>
-<div class="row"><span>Transaction status</span><span class="value" id="txState">Not created</span></div>
+<div class="row"><span>Sponsor SOL balance</span><span class="value" id="sponsorBalance">Not checked</span></div>
+<div class="row"><span>Transaction state</span><span class="value" id="txState">Not created</span></div>
 <button class="btn" id="prepare" disabled>Prepare exact burn transaction</button>
 <button class="btn" id="ownerSign" disabled>Sign as owner</button>
 <button class="btn" id="sponsorSign" disabled>Switch to sponsor wallet & sign</button>
 <button class="btn" id="simulate" disabled>Verify both signatures & simulate</button>
 <button class="btn" id="broadcast" disabled>Broadcast irreversible burn</button>
-<div class="row"><span>Owner wallet signing API</span><span class="value" id="ownerSigner"></span></div>
-<div class="row"><span>Sponsor address configured</span><span class="value" id="sponsorCheck"></span></div>
-<div class="row"><span>Sponsor SOL balance (finalized)</span><span class="value" id="sponsorBalance">Not checked</span></div>
-<div class="row"><span>Two-party transaction signatures</span><span class="value warn">NOT TESTED — signing disabled</span></div>
 </div>
-<div class="warning"><b>Safety lock:</b> This page never requests a transaction signature and never broadcasts a transaction. The mint authority may be null or controlled by another wallet; that does not by itself prevent a holder-authorized SPL token burn. The owner must authorize the burn, while the sponsor must separately authorize the fee payment. Never enter or share a recovery phrase or private key.</div>
-<p class="small">Network: Solana Mainnet. RPC reads use the isolated Pluto RPC proxy. Open this HTTPS page inside Phantom's in-app browser if Phantom is not detected.</p>
+<div class="warning"><b>Important:</b> Never enter or share a recovery phrase or private key. Each wallet must approve its own signature in Phantom. Signing is not broadcasting. The final broadcast is irreversible. If any wallet, balance, signature, or simulation check fails, stop.</div>
+<p class="small">Solana Mainnet · Open inside Phantom's in-app browser. Both wallets must be accessible in Phantom. No keys or signatures are sent to Pluto servers; the RPC proxy relays Solana JSON-RPC requests only.</p>
 </main>
 <script src="https://unpkg.com/@solana/web3.js@1.98.4/lib/index.iife.min.js"></script>
 <script>
@@ -56,242 +54,164 @@ const SPONSOR='4C66bKRcWfXQDaz6Kw32pnz3aiPvN2JrvG9MjDWkar2i';
 const TOKEN='TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
 const TOKEN_2022='TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb';
 const EXPECTED_SUPPLY='3000000000000000000';
-const EXPECTED_BALANCE='2999970000000000000';
+const RESERVE_RAW=30000000000000n;
 const RPC_URL='https://pluto-burn-rpc.onrender.com/rpc';
 const $=id=>document.getElementById(id);
-function fmt(raw,decimals){const n=BigInt(raw),d=10n**BigInt(decimals);const whole=n/d,frac=(n%d).toString().padStart(decimals,'0').replace(/0+$/,'');return whole.toLocaleString('en-US')+(frac?'.'+frac:'')+' PLT';}
-async function rpc(method,params){const r=await fetch(RPC_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:Date.now(),method,params})});if(!r.ok)throw Error('RPC proxy HTTP '+r.status);const j=await r.json();if(j.error)throw Error(j.error.message||'RPC error');return j.result;}
-function b58(bytes){const alphabet='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';let n=0n;for(const b of bytes)n=(n<<8n)+BigInt(b);let out='';while(n>0n){const r=Number(n%58n);out=alphabet[r]+out;n/=58n;}for(const b of bytes){if(b!==0)break;out='1'+out;}return out||'1';}
-function decodeMintAccount(account){
- const raw=account?.data;
- if(!Array.isArray(raw)||typeof raw[0]!=='string'||raw[1]!=='base64')throw Error('Raw mint account data is missing or not base64.');
- const bytes=Uint8Array.from(atob(raw[0]),ch=>ch.charCodeAt(0));
- if(bytes.length<82)throw Error('Mint account data is shorter than the 82-byte SPL mint layout.');
- const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
- const option=(offset)=>{const tag=view.getUint32(offset,true);if(tag===0)return null;if(tag!==1)throw Error('Invalid COption tag in mint account bytes.');return b58(bytes.slice(offset+4,offset+36));};
- const supply=view.getBigUint64(36,true).toString();
- const decimals=bytes[44];
- const initialized=bytes[45]===1;
- if(!initialized)throw Error('Mint account is not initialized.');
- return {type:'mint',mintAuthority:option(0),supply,decimals,freezeAuthority:option(46)};
-}
-function set(id,value,cls){$(id).textContent=value;if(cls)$ (id).className='value '+cls;}
-$('connect').addEventListener('click',async()=>{
- const button=$('connect');button.disabled=true;$('status').textContent='Connecting to Phantom…';
- $('details').hidden=true;
- try{
-  const provider=window.phantom?.solana||window.solana;
-  if(!provider?.isPhantom)throw Error('Phantom was not detected. Open this page in Phantom’s in-app browser.');
-  if(typeof provider.connect!=='function')throw Error('Phantom connection API is unavailable.');
-  const resp=await provider.connect({onlyIfTrusted:false});
-  const address=resp.publicKey?.toString()||provider.publicKey?.toString();
-  if(!address)throw Error('Wallet connection returned no public key.');
-  $('wallet').textContent=address;
-  if(address!==OWNER)throw Error('Connected wallet does not match the configured Pluto owner wallet. No checks or transactions were run.');
-  $('status').textContent='Owner matched. Reading mint account and token accounts independently…';
-  const [mintAccount,tokenAccounts]=await Promise.all([
-   rpc('getAccountInfo',[MINT,{encoding:'base64',commitment:'finalized'}]),
-   rpc('getTokenAccountsByOwner',[address,{mint:MINT},{encoding:'jsonParsed',commitment:'finalized'}])
-  ]);
-  let sponsorBalanceText='Unavailable — balance read failed';
-  try{const sponsorBalance=await rpc('getBalance',[SPONSOR,{commitment:'finalized'}]);sponsorBalanceText=(Number(sponsorBalance.value)/1e9).toFixed(9)+' SOL';}catch(e){sponsorBalanceText='Unavailable — '+(e.message||'RPC read failed');}
-  if(!mintAccount?.value)throw Error('Mint account was not found on Solana mainnet.');
-  const info=mintAccount.value, parsed=decodeMintAccount(info);
-  const program=info.owner;
-  if(program!==TOKEN&&program!==TOKEN_2022)throw Error('Mint account owner is not a recognized SPL Token or Token-2022 program: '+program);
-  const decimals=parsed.decimals;
-  const supply=String(parsed.supply);
-  const rows=tokenAccounts.value||[];
-  let total=0n, allOwnersCorrect=true, allProgramsCorrect=true;
-  for(const item of rows){
-   const ai=item.account?.data?.parsed?.info;
-   if(!ai||ai.mint!==MINT)throw Error('A returned token account has unexpected or missing parsed mint data.');
-   if(ai.owner!==address)allOwnersCorrect=false;
-   if(item.account.owner!==program)allProgramsCorrect=false;
-   total+=BigInt(ai.tokenAmount.amount);
-  }
-  $('program').textContent=program+(program===TOKEN?' (SPL Token)': ' (Token-2022)');
-  $('mintAuthority').textContent=parsed.mintAuthority||'None (revoked)';
-  $('freezeAuthority').textContent=parsed.freezeAuthority||'None (revoked)';
-  $('supply').textContent=fmt(supply,decimals);
-  $('decimals').textContent=String(decimals);
-  $('accountCount').textContent=String(rows.length);
-  $('balance').textContent=fmt(total.toString(),decimals);
-  $('ownerCheck').textContent=allOwnersCorrect&&allProgramsCorrect?'PASS — all returned accounts match owner and program':'FAIL — owner or token-program mismatch';
-  $('ownerSigner').textContent=typeof provider.signTransaction==='function'?'Wallet API exposes signTransaction (not invoked)':'FAIL — signTransaction unavailable';
-  $('sponsorCheck').textContent=SPONSOR.length===44?'Configured: '+SPONSOR:'FAIL — sponsor address format invalid';
-  $('sponsorBalance').textContent=sponsorBalanceText;
-  $('details').hidden=false;
-  const failures=[];
-  if(decimals!==4)failures.push('Decimals are '+decimals+', expected 4.');
-  if(supply!==EXPECTED_SUPPLY)failures.push('Mint raw supply does not match the expected 300 trillion PLT.');
-  if(total<BigInt(EXPECTED_BALANCE))failures.push('Owner balance is below the required 299,997,000,000,000 PLT threshold.');
-  if(!allOwnersCorrect||!allProgramsCorrect)failures.push('One or more token accounts failed owner/program validation.');
-  if(typeof provider.signTransaction!=='function')failures.push('Owner wallet transaction-signing API is unavailable.');
-  if(failures.length){$('status').textContent='VERIFICATION FAILED — STOP.\n'+failures.join('\n')+'\nNo transaction was created, signed, simulated, or sent.';return;}
-  $('status').textContent='READ-ONLY ON-CHAIN CHECKS PASSED.\nMint account, token program, authorities, decimals, supply, and owner token-account balance were read from finalized RPC data.\n\nFEE-PAYER SIGNING IS NOT YET VERIFIED: this page has not connected the sponsor wallet, constructed a burn transaction, requested either signature, or tested a two-signature message. Do not proceed to a burn based on this page alone.\n\nNo transaction was created, signed, simulated, or sent.';
- }catch(e){$('status').textContent='CHECK FAILED — STOP.\n'+(e.message||String(e))+'\nNo transaction was created, signed, simulated, or sent.';}
- finally{button.disabled=false;}
-});
-</script></body></html<script>
-'use strict';
-const MINT='AfrUBKBsrsfFahfGuafChr37tBkkKJpPWdeXj86j2r8m';
-const OWNER='7ZPDk8A6ziuKpbfrXnuUUiJ3TP9aFUq5ETAADE6A6sqE';
-const SPONSOR='4C66bKRcWfXQDaz6Kw32pnz3aiPvN2JrvG9MjDWkar2i';
-const TOKEN='TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
-const TOKEN_2022='TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb';
-const EXPECTED_SUPPLY='3000000000000000000';
-const RESERVE_RAW=30000000000000n; // 3,000,000,000 PLT at 4 decimals
-const RPC_URL='https://pluto-burn-rpc.onrender.com/rpc';
-const $=id=>document.getElementById(id);
-let provider=null, ownerProvider=null, mintProgram=null, tokenAccountAddress=null;
-let burnRaw=null, tx=null, ownerSigned=false, sponsorSigned=false, simulated=false, signature=null, lastValidBlockHeight=null;
-function fmt(raw,decimals=4){const n=BigInt(raw),d=10n**BigInt(decimals);const whole=n/d,frac=(n%d).toString().padStart(decimals,'0').replace(/0+$/,'');return whole.toLocaleString('en-US')+(frac?'.'+frac:'')+' PLT';}
+let ownerProvider=null, tx=null, tokenAccountAddress=null, tokenProgram=null, burnRaw=0n;
+let ownerSigned=false, sponsorSigned=false, simulated=false, messageSnapshot=null, ownerSignatureSnapshot=null;
+let submittedSignature=null;
 function status(s){$('status').textContent=s;}
 function set(id,value,cls){$(id).textContent=value;$(id).className='value'+(cls?' '+cls:'');}
+function fmt(raw,decimals=4){const n=BigInt(raw),d=10n**BigInt(decimals);const whole=n/d,frac=(n%d).toString().padStart(decimals,'0').replace(/0+$/,'');return whole.toLocaleString('en-US')+(frac?'.'+frac:'')+' PLT';}
 async function rpc(method,params){const r=await fetch(RPC_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:Date.now(),method,params})});if(!r.ok)throw Error('RPC proxy HTTP '+r.status);const j=await r.json();if(j.error)throw Error(j.error.message||'RPC error');return j.result;}
 function b58(bytes){const alphabet='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';let n=0n;for(const b of bytes)n=(n<<8n)+BigInt(b);let out='';while(n>0n){out=alphabet[Number(n%58n)]+out;n/=58n;}for(const b of bytes){if(b!==0)break;out='1'+out;}return out||'1';}
-function decodeMintAccount(account){
- const raw=account?.data;if(!Array.isArray(raw)||typeof raw[0]!=='string'||raw[1]!=='base64')throw Error('Raw mint account data is missing or not base64.');
- const bytes=Uint8Array.from(atob(raw[0]),c=>c.charCodeAt(0));if(bytes.length<82)throw Error('Mint account is shorter than the SPL mint layout.');
+function decodeMint(account){
+ const raw=account?.data;if(!Array.isArray(raw)||typeof raw[0]!=='string'||raw[1]!=='base64')throw Error('Mint account data is not base64.');
+ const bytes=Uint8Array.from(atob(raw[0]),c=>c.charCodeAt(0));if(bytes.length<82)throw Error('Mint account data is shorter than the SPL mint layout.');
  const v=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
- const option=o=>{const tag=v.getUint32(o,true);if(tag===0)return null;if(tag!==1)throw Error('Invalid mint authority option.');return b58(bytes.slice(o+4,o+36));};
+ const opt=o=>{const tag=v.getUint32(o,true);if(tag===0)return null;if(tag!==1)throw Error('Invalid mint authority option tag.');return b58(bytes.slice(o+4,o+36));};
  if(bytes[45]!==1)throw Error('Mint is not initialized.');
- return {mintAuthority:option(0),supply:v.getBigUint64(36,true).toString(),decimals:bytes[44],freezeAuthority:option(46)};
+ return {mintAuthority:opt(0),supply:v.getBigUint64(36,true).toString(),decimals:bytes[44],freezeAuthority:opt(46)};
 }
-function activeProvider(){return window.phantom?.solana||window.solana||null;}
-function signatureFor(pubkey){const key=pubkey.toBase58();return tx?.signatures?.find(s=>s.publicKey.toBase58()===key)?.signature||null;}
-function assertSig(pubkey){const sig=signatureFor(pubkey);if(!sig)throw Error('Required wallet signature is missing: '+pubkey.toBase58());return sig;}
-async function refreshOwnerState(p){
+function providerNow(){return window.phantom?.solana||window.solana||null;}
+function sigFor(pubkey){const k=pubkey.toBase58();return tx?.signatures?.find(s=>s.publicKey.toBase58()===k)?.signature||null;}
+function requireSignature(pubkey){const s=sigFor(pubkey);if(!s)throw Error('Missing required signature from '+pubkey.toBase58());return s;}
+function sameBytes(a,b){if(!a||!b||a.length!==b.length)return false;for(let i=0;i<a.length;i++)if(a[i]!==b[i])return false;return true;}
+async function readChain(){
  const [mintRes,accounts]=await Promise.all([
   rpc('getAccountInfo',[MINT,{encoding:'base64',commitment:'finalized'}]),
   rpc('getTokenAccountsByOwner',[OWNER,{mint:MINT},{encoding:'jsonParsed',commitment:'finalized'}])
  ]);
  if(!mintRes?.value)throw Error('Mint account not found.');
- const mintInfo=mintRes.value, parsed=decodeMintAccount(mintInfo);
- if(mintInfo.owner!==TOKEN&&mintInfo.owner!==TOKEN_2022)throw Error('Unrecognized token program.');
- if(parsed.decimals!==4||parsed.supply!==EXPECTED_SUPPLY)throw Error('Mint decimals or supply changed. Stop and re-check before any transaction.');
+ const mintInfo=mintRes.value, parsed=decodeMint(mintInfo), program=mintInfo.owner;
+ if(program!==TOKEN&&program!==TOKEN_2022)throw Error('Unrecognized token program: '+program);
+ if(parsed.decimals!==4||parsed.supply!==EXPECTED_SUPPLY)throw Error('Mint decimals or supply differ from the verified values. Stop.');
  const rows=accounts.value||[];
- if(rows.length!==1)throw Error('Expected exactly one owner token account; found '+rows.length+'. No transaction will be prepared.');
+ if(rows.length!==1)throw Error('Expected exactly one owner token account; found '+rows.length+'. Stop for manual review.');
  const row=rows[0], info=row.account?.data?.parsed?.info;
- if(!info||info.mint!==MINT||info.owner!==OWNER||row.account.owner!==mintInfo.owner)throw Error('Owner token-account ownership, mint, or program mismatch.');
+ if(!info||info.mint!==MINT||info.owner!==OWNER||row.account.owner!==program)throw Error('Owner token-account mint, owner, or program mismatch.');
  const balance=BigInt(info.tokenAmount.amount);
  if(balance<RESERVE_RAW)throw Error('Owner balance is below the 3 billion PLT reserve.');
- if(balance>BigInt(parsed.supply))throw Error('Owner token balance exceeds mint supply; invalid RPC state.');
- return {parsed,mintInfo,program:mintInfo.owner,tokenAccount:row.pubkey,balance};
+ if(balance>BigInt(parsed.supply))throw Error('Owner token balance exceeds mint supply.');
+ return {parsed,program,tokenAccount:row.pubkey,balance};
 }
 $('connect').addEventListener('click',async()=>{
- const button=$('connect');button.disabled=true;$('details').hidden=true;
+ const b=$('connect');b.disabled=true;$('details').hidden=true;
  try{
-  provider=activeProvider();if(!provider?.isPhantom)throw Error('Phantom was not detected. Open this page in Phantom’s in-app browser.');
-  const resp=await provider.connect({onlyIfTrusted:false});
-  const address=resp.publicKey?.toString()||provider.publicKey?.toString();
-  if(address!==OWNER)throw Error('Connected wallet does not match the configured Pluto owner wallet.');
-  ownerProvider=provider;status('Owner matched. Reading finalized mainnet state…');
-  const state=await refreshOwnerState(provider);mintProgram=state.program;tokenAccountAddress=state.tokenAccount.toString();
-  burnRaw=state.balance-RESERVE_RAW;
-  set('wallet',address);set('program',mintProgram);set('mintAuthority',state.parsed.mintAuthority||'None (revoked)');set('freezeAuthority',state.parsed.freezeAuthority||'None (revoked)');
-  set('supply',fmt(state.parsed.supply));set('decimals','4');set('accountCount','1');set('balance',fmt(state.balance));set('ownerCheck','PASS — single account matches owner, mint and program','good');
-  set('ownerSigner',typeof provider.signTransaction==='function'?'signTransaction available (not yet invoked)':'Unavailable');
-  set('sponsorCheck','Configured: '+SPONSOR);
-  try{const sb=await rpc('getBalance',[SPONSOR,{commitment:'finalized'}]);set('sponsorBalance',(Number(sb.value)/1e9).toFixed(9)+' SOL');}catch(e){set('sponsorBalance','Balance read failed: '+e.message);}
-  set('proposedBurn',fmt(burnRaw));set('tokenAccount',tokenAccountAddress);set('txState','Not created');
-  $('details').hidden=false;$('prepare').disabled=false;
-  status('READ-ONLY CHECKS PASSED. The proposed burn is calculated from the fresh owner balance and will leave exactly 3,000,000,000 PLT in this owner token account. No transaction exists yet. Tap Prepare only when ready.');
+  const p=providerNow();if(!p?.isPhantom)throw Error('Phantom was not detected. Open this page in Phantom browser.');
+  const resp=await p.connect({onlyIfTrusted:false}), address=resp.publicKey?.toString()||p.publicKey?.toString();
+  if(address!==OWNER)throw Error('Connected account is not the configured owner wallet.');
+  ownerProvider=p;
+  const state=await readChain();
+  tokenProgram=state.program;tokenAccountAddress=state.tokenAccount.toString();burnRaw=state.balance-RESERVE_RAW;
+  set('wallet',address);set('program',tokenProgram);set('mintAuthority',state.parsed.mintAuthority||'None (revoked)');
+  set('freezeAuthority',state.parsed.freezeAuthority||'None (revoked)');set('supply',fmt(state.parsed.supply));
+  set('decimals','4');set('accountCount','1');set('balance',fmt(state.balance));
+  set('ownerCheck','PASS — account owner, mint and program match','good');
+  set('proposedBurn',fmt(burnRaw));set('remaining',fmt(RESERVE_RAW));set('tokenAccount',tokenAccountAddress);
+  try{const sb=await rpc('getBalance',[SPONSOR,{commitment:'finalized'}]);set('sponsorBalance',(Number(sb.value)/1e9).toFixed(9)+' SOL');}
+  catch(e){set('sponsorBalance','Read failed: '+e.message);}
+  set('txState','Not created');$('details').hidden=false;
+  $('prepare').disabled=burnRaw<=0n;
+  status('FINALIZED READ-ONLY CHECKS PASSED. Current balance: '+fmt(state.balance)+'. Exact burn calculated: '+fmt(burnRaw)+'. Exactly 3,000,000,000 PLT will remain in the owner account. No transaction has been created.');
  }catch(e){status('CHECK FAILED — STOP.\n'+e.message+'\nNo transaction was created, signed, simulated, or sent.');}
- finally{button.disabled=false;}
+ finally{b.disabled=false;}
 });
 $('prepare').addEventListener('click',async()=>{
  $('prepare').disabled=true;
  try{
-  if(!window.solanaWeb3)throw Error('Solana transaction library did not load. No transaction was created.');
-  const state=await refreshOwnerState(ownerProvider);
-  const amount=state.balance-RESERVE_RAW;
-  if(amount<=0n)throw Error('There is no balance above the 3 billion PLT reserve to burn.');
-  if(state.tokenAccount.toString()!==tokenAccountAddress||amount!==burnRaw)throw Error('Owner account or balance changed since verification. Reconnect and re-check.');
+  if(!window.solanaWeb3)throw Error('Solana web3 library did not load.');
+  const state=await readChain(), amount=state.balance-RESERVE_RAW;
+  if(state.tokenAccount.toString()!==tokenAccountAddress||amount!==burnRaw)throw Error('On-chain owner account or balance changed. Reconnect and re-verify.');
+  if(amount<=0n)throw Error('No PLT is available above the reserve.');
   const {PublicKey,Transaction,TransactionInstruction}=window.solanaWeb3;
-  const ownerKey=new PublicKey(OWNER), sponsorKey=new PublicKey(SPONSOR), mintKey=new PublicKey(MINT);
   const data=new Uint8Array(9);data[0]=8;let n=amount;for(let i=0;i<8;i++){data[i+1]=Number(n&255n);n>>=8n;}
-  const ix=new TransactionInstruction({programId:new PublicKey(mintProgram),keys:[
-   {pubkey:new PublicKey(state.tokenAccount),isSigner:false,isWritable:true},
-   {pubkey:mintKey,isSigner:false,isWritable:true},
-   {pubkey:ownerKey,isSigner:true,isWritable:false}
+  const ix=new TransactionInstruction({programId:new PublicKey(tokenProgram),keys:[
+   {pubkey:new PublicKey(tokenAccountAddress),isSigner:false,isWritable:true},
+   {pubkey:new PublicKey(MINT),isSigner:false,isWritable:true},
+   {pubkey:new PublicKey(OWNER),isSigner:true,isWritable:false}
   ],data});
   const bh=await rpc('getLatestBlockhash',[{commitment:'confirmed'}]);
-  tx=new Transaction({feePayer:sponsorKey,recentBlockhash:bh.value.blockhash,lastValidBlockHeight:bh.value.lastValidBlockHeight}).add(ix);
-  lastValidBlockHeight=bh.value.lastValidBlockHeight;ownerSigned=false;sponsorSigned=false;simulated=false;signature=null;
-  set('txState','Constructed locally — unsigned');
-  $('ownerSign').disabled=false;
-  status('TRANSACTION PREPARED LOCALLY. Burn: '+fmt(amount)+'. Owner reserve: exactly 3,000,000,000 PLT. Sponsor pays network fee. Nothing has been signed or sent.');
- }catch(e){set('txState','Preparation failed');status('PREPARATION FAILED — STOP.\n'+e.message+'\nNo transaction was signed or sent.');}
+  tx=new Transaction({feePayer:new PublicKey(SPONSOR),recentBlockhash:bh.value.blockhash}).add(ix);
+  ownerSigned=false;sponsorSigned=false;simulated=false;messageSnapshot=null;ownerSignatureSnapshot=null;
+  set('txState','Prepared locally — unsigned');$('ownerSign').disabled=false;
+  $('sponsorSign').disabled=true;$('simulate').disabled=true;$('broadcast').disabled=true;
+  status('PREPARED LOCALLY. Burn: '+fmt(amount)+'. Owner reserve: 3,000,000,000 PLT. Sponsor pays the network fee. Nothing has been signed or sent.');
+ }catch(e){set('txState','Preparation failed','bad');status('PREPARATION FAILED — STOP.\n'+e.message+'\nNo transaction was signed or sent.');}
  finally{$('prepare').disabled=false;}
 });
 $('ownerSign').addEventListener('click',async()=>{
  $('ownerSign').disabled=true;
  try{
-  const p=activeProvider();if(!p||p.publicKey?.toString()!==OWNER)throw Error('Switch Phantom back to the owner wallet before signing.');
+  const p=providerNow();if(!p||p.publicKey?.toString()!==OWNER)throw Error('Switch Phantom to the owner wallet first.');
   if(typeof p.signTransaction!=='function')throw Error('Owner wallet does not expose signTransaction.');
-  const signed=await p.signTransaction(tx);
-  if(!signed)throw Error('Owner wallet returned no signed transaction.');
-  tx=signed;assertSig(new window.solanaWeb3.PublicKey(OWNER));ownerSigned=true;
-  set('txState','Owner signature present — not broadcast');
+  const signed=await p.signTransaction(tx);if(!signed)throw Error('Owner wallet returned no signed transaction.');
+  tx=signed;const ownerKey=new window.solanaWeb3.PublicKey(OWNER);ownerSignatureSnapshot=requireSignature(ownerKey);
+  messageSnapshot=tx.serializeMessage();ownerSigned=true;set('txState','Owner signature present — not broadcast');
   $('sponsorSign').disabled=false;
-  status('OWNER SIGNATURE RECEIVED. The transaction has not been sent. Next, switch Phantom to the configured sponsor wallet and tap “Switch to sponsor wallet & sign”. The owner signature must remain intact.');
- }catch(e){status('OWNER SIGNING FAILED — STOP.\n'+e.message+'\nNo transaction was sent.');$('ownerSign').disabled=false;}
+  status('OWNER SIGNATURE RECEIVED. Nothing has been broadcast. Switch Phantom to the sponsor wallet, then tap the sponsor-sign button. The sponsor must be '+SPONSOR+'.');
+ }catch(e){status('OWNER SIGNING FAILED — STOP.\n'+e.message+'\nNothing was sent.');$('ownerSign').disabled=false;}
 });
 $('sponsorSign').addEventListener('click',async()=>{
  $('sponsorSign').disabled=true;
  try{
-  if(!ownerSigned)throw Error('Owner signature is not present.');
-  assertSig(new window.solanaWeb3.PublicKey(OWNER));
-  const p=activeProvider();if(!p?.isPhantom)throw Error('Phantom is not available.');
-  if(p.publicKey?.toString()!==SPONSOR)throw Error('Phantom is not connected to the sponsor wallet. Switch accounts in Phantom, then tap this button again.');
+  if(!ownerSigned)throw Error('Owner signature is missing.');
+  const ownerKey=new window.solanaWeb3.PublicKey(OWNER),sponsorKey=new window.solanaWeb3.PublicKey(SPONSOR);
+  if(!sameBytes(tx.serializeMessage(),messageSnapshot))throw Error('Transaction message changed after owner signing.');
+  if(!sameBytes(requireSignature(ownerKey),ownerSignatureSnapshot))throw Error('Owner signature changed before sponsor signing.');
+  const p=providerNow();if(!p?.isPhantom)throw Error('Phantom is unavailable.');
+  if(p.publicKey?.toString()!==SPONSOR)throw Error('Phantom is not switched to the configured sponsor wallet.');
   if(typeof p.signTransaction!=='function')throw Error('Sponsor wallet does not expose signTransaction.');
-  const signed=await p.signTransaction(tx);
-  if(!signed)throw Error('Sponsor wallet returned no signed transaction.');
-  tx=signed;assertSig(new window.solanaWeb3.PublicKey(OWNER));assertSig(new window.solanaWeb3.PublicKey(SPONSOR));sponsorSigned=true;
-  set('txState','Both wallet signatures present — not broadcast');
+  const signed=await p.signTransaction(tx);if(!signed)throw Error('Sponsor wallet returned no signed transaction.');
+  tx=signed;
+  if(!sameBytes(tx.serializeMessage(),messageSnapshot))throw Error('Sponsor wallet changed the transaction message.');
+  if(!sameBytes(requireSignature(ownerKey),ownerSignatureSnapshot))throw Error('Sponsor wallet did not preserve the owner signature.');
+  requireSignature(sponsorKey);sponsorSigned=true;set('txState','Both signatures present — not broadcast','good');
   $('simulate').disabled=false;
-  status('BOTH SIGNATURES RECEIVED. No transaction has been sent. Next step is cryptographic signature verification and on-chain simulation.');
- }catch(e){status('SPONSOR SIGNING FAILED — STOP.\n'+e.message+'\nNo transaction was sent.');$('sponsorSign').disabled=false;}
+  status('BOTH WALLET SIGNATURES RECEIVED. The signed transaction has not been sent. Next, verify both signatures and simulate on Solana.');
+ }catch(e){status('SPONSOR SIGNING FAILED — STOP.\n'+e.message+'\nNothing was sent.');$('sponsorSign').disabled=false;}
 });
 $('simulate').addEventListener('click',async()=>{
  $('simulate').disabled=true;
  try{
-  if(!ownerSigned||!sponsorSigned)throw Error('Both owner and sponsor signatures are required.');
+  if(!ownerSigned||!sponsorSigned)throw Error('Both wallet signatures are required.');
+  if(!sameBytes(tx.serializeMessage(),messageSnapshot))throw Error('Signed transaction message differs from the prepared message.');
+  if(!sameBytes(requireSignature(new window.solanaWeb3.PublicKey(OWNER)),ownerSignatureSnapshot))throw Error('Owner signature is missing or changed.');
+  requireSignature(new window.solanaWeb3.PublicKey(SPONSOR));
   if(!tx.verifySignatures(true))throw Error('Cryptographic signature verification failed.');
+  const fresh=await readChain();
+  if(fresh.balance-RESERVE_RAW!==burnRaw||fresh.tokenAccount.toString()!==tokenAccountAddress)throw Error('Owner balance/account changed after signing. Do not broadcast; start again.');
   const bytes=tx.serialize({requireAllSignatures:true,verifySignatures:true});
-  const base64=btoa(String.fromCharCode(...bytes));
+  const base64=btoa(Array.from(bytes,b=>String.fromCharCode(b)).join(''));
   const result=await rpc('simulateTransaction',[base64,{encoding:'base64',sigVerify:true,replaceRecentBlockhash:false,commitment:'confirmed'}]);
-  if(result.value?.err)throw Error('Simulation returned an error: '+JSON.stringify(result.value.err));
-  simulated=true;set('txState','Both signatures verified; simulation passed — not broadcast');
-  $('broadcast').disabled=false;
-  status('SIMULATION PASSED. Burn: '+fmt(burnRaw)+'. Remaining in owner wallet: 3,000,000,000 PLT. Fee payer: '+SPONSOR+'. The signed transaction is still NOT broadcast. Review these exact details; only tapping the final irreversible-burn button will submit it.');
- }catch(e){set('txState','Simulation failed or signatures invalid');status('SIMULATION FAILED — STOP.\n'+e.message+'\nNothing was broadcast.');}
+  if(result.value?.err)throw Error('Simulation failed: '+JSON.stringify(result.value.err));
+  simulated=true;set('txState','Signatures verified; simulation passed — not sent','good');$('broadcast').disabled=false;
+  status('SIMULATION PASSED. Burn: '+fmt(burnRaw)+'. Owner wallet remaining: 3,000,000,000 PLT. Fee payer: '+SPONSOR+'. Nothing has been broadcast. Only the final irreversible button can submit this transaction.');
+ }catch(e){set('txState','Simulation failed — not broadcast','bad');status('SIMULATION FAILED — STOP.\n'+e.message+'\nNothing was broadcast.');}
  finally{$('simulate').disabled=false;}
 });
 $('broadcast').addEventListener('click',async()=>{
  $('broadcast').disabled=true;
  try{
-  if(!simulated||!ownerSigned||!sponsorSigned)throw Error('Both verified signatures and a successful simulation are required.');
-  if(!confirm('FINAL IRREVERSIBLE ACTION\n\nBurn '+fmt(burnRaw)+' and leave exactly 3,000,000,000 PLT in the owner wallet?\n\nThis submits the already signed transaction to Solana mainnet.'))throw Error('Broadcast cancelled by user.');
+  if(!simulated||!ownerSigned||!sponsorSigned)throw Error('Both signatures and successful simulation are required.');
+  if(!tx.verifySignatures(true))throw Error('Signature verification no longer passes.');
+  if(!confirm('IRREVERSIBLE MAINNET ACTION\n\nBurn '+fmt(burnRaw)+' PLT and leave 3,000,000,000 PLT in the owner wallet?\n\nThis sends the already signed transaction to Solana.'))throw Error('Broadcast cancelled.');
   const bytes=tx.serialize({requireAllSignatures:true,verifySignatures:true});
-  const base64=btoa(String.fromCharCode(...bytes));
+  const base64=btoa(Array.from(bytes,b=>String.fromCharCode(b)).join(''));
   const sent=await rpc('sendTransaction',[base64,{encoding:'base64',skipPreflight:false,preflightCommitment:'confirmed',maxRetries:3}]);
-  signature=sent;set('txState','Submitted: '+sent);
-  status('TRANSACTION SUBMITTED. Waiting for finalized confirmation…\nSignature: '+sent);
-  let confirmed=false;
-  for(let i=0;i<30;i++){
-   const s=await rpc('getSignatureStatuses',[[sent],{searchTransactionHistory:true}]);
-   const v=s.value?.[0];
-   if(v?.err)throw Error('Transaction failed on chain: '+JSON.stringify(v.err));
-   if(v?.confirmationStatus==='finalized'){confirmed=true;break;}
+  submittedSignature=sent;set('txState','Submitted: '+sent);status('SUBMITTED. Waiting for finalized confirmation…\nSignature: '+sent);
+  let finalized=false;
+  for(let i=0;i<45;i++){
+   const result=await rpc('getSignatureStatuses',[[sent],{searchTransactionHistory:true}]),v=result.value?.[0];
+   if(v?.err)throw Error('On-chain transaction error: '+JSON.stringify(v.err));
+   if(v?.confirmationStatus==='finalized'){finalized=true;break;}
    await new Promise(resolve=>setTimeout(resolve,2000));
   }
-  if(!confirmed){status('TRANSACTION SUBMITTED BUT FINALIZATION NOT YET CONFIRMED.\nSignature: '+sent+'\nCheck this signature on Solana Explorer before taking any further action.');return;}
-  const fresh=await refreshOwnerState(ownerProvider);
-  status('BURN CONFIRMED FINALIZED.\nBurn submitted: '+fmt(burnRaw)+'\nOwner balance now: '+fmt(fresh.balance)+'\nTransaction signature: '+sent);
-  set('txState','Finalized: '+sent);
- }catch(e){status('BROADCAST / CONFIRMATION STATUS: '+e.message+'\nIf a signature was returned, check it on Solana Explorer before retrying. Never submit again blindly.');$('broadcast').disabled=false;}
+  if(!finalized){status('SUBMITTED; FINALIZATION NOT YET CONFIRMED.\nSignature: '+sent+'\nDo not submit again. Check this signature on Solana Explorer.');return;}
+  const after=await readChain();set('txState','Finalized: '+sent,'good');
+  status('BURN CONFIRMED FINALIZED.\nBurn submitted: '+fmt(burnRaw)+'\nOwner balance now: '+fmt(after.balance)+'\nSignature: '+sent);
+ }catch(e){status('BROADCAST STATUS: '+e.message+'\nIf a transaction signature was returned, check it before any retry. Never submit twice blindly.');$('broadcast').disabled=false;}
 });
-</script></body></html>
+</script>
+</body>
+</html>
