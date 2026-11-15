@@ -213,7 +213,7 @@ $('prepare').addEventListener('click',async()=>{
   const ownerKey=new PublicKey(OWNER), sponsorKey=new PublicKey(SPONSOR), mintKey=new PublicKey(MINT);
   const data=new Uint8Array(9);data[0]=8;let n=amount;for(let i=0;i<8;i++){data[i+1]=Number(n&255n);n>>=8n;}
   const ix=new TransactionInstruction({programId:new PublicKey(mintProgram),keys:[
-   {pubkey:state.tokenAccount,isSigner:false,isWritable:true},
+   {pubkey:new PublicKey(state.tokenAccount),isSigner:false,isWritable:true},
    {pubkey:mintKey,isSigner:false,isWritable:true},
    {pubkey:ownerKey,isSigner:true,isWritable:false}
   ],data});
