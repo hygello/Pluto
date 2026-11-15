@@ -29,9 +29,9 @@
 <script>
 const MINT='AfrUBKBsrsfFahfGuafChr37tBkkKJpPWdeXj86j2r8m';
 const OWNER='7ZPDk8A6ziuKpbfrXnuUUiJ3TP9aFUq5ETAADE6A6sqE';
-const RPCS=['https://solana-rpc.publicnode.com','https://api.mainnet-beta.solana.com'];
+const RPC_URL='https://pluto-burn-rpc.onrender.com/rpc';
 const $=id=>document.getElementById(id);
-async function rpc(method,params){let last;for(const endpoint of RPCS){try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});if(!r.ok)throw Error('RPC '+endpoint+' returned HTTP '+r.status);const j=await r.json();if(j.error)throw Error(j.error.message||'RPC error');return j.result;}catch(e){last=e;}}throw Error('Both public Solana RPC endpoints failed: '+(last?.message||'unknown error'));}
+async function rpc(method,params){const r=await fetch(RPC_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});if(!r.ok)throw Error('Solana RPC proxy returned HTTP '+r.status);const j=await r.json();if(j.error)throw Error(j.error.message||'RPC error');return j.result;}
 $('connect').addEventListener('click',async()=>{
  $('connect').disabled=true;$('status').textContent='Checking for Phantom…';
  try{
