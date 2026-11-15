@@ -2,62 +2,108 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pluto PLT Supply Check</title>
+<title>Pluto PLT — Independent Pre-flight Verification</title>
 <style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#090b12;color:#f4f5fa;font:16px system-ui,-apple-system,Segoe UI,sans-serif;display:grid;place-items:center;padding:22px}.panel{width:min(100%,520px);background:#151925;border:1px solid #30384b;border-radius:22px;padding:25px;box-shadow:0 18px 60px #0008}h1{margin:0 0 8px;font-size:25px}p{color:#b9c0d0;line-height:1.55}.pill{display:inline-block;padding:6px 10px;border-radius:99px;background:#302718;color:#ffd47a;font-size:12px;font-weight:700;letter-spacing:.04em}.btn{width:100%;border:0;border-radius:12px;padding:15px;background:#f2c94c;color:#151515;font-weight:800;font-size:16px;margin-top:12px}.row{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid #30384b}.row span:first-child{color:#aeb7c9}.value{font-family:ui-monospace,monospace;text-align:right;overflow-wrap:anywhere}.status{margin-top:16px;padding:12px;border-radius:12px;background:#20283a;color:#d9e2f7;white-space:pre-wrap}.small{font-size:12px;color:#9ba5b8}.warning{margin-top:18px;border:1px solid #775a2b;background:#2a2115;padding:13px;border-radius:12px;color:#f5d69b;line-height:1.5}
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#090b12;color:#f4f5fa;font:15px system-ui,-apple-system,Segoe UI,sans-serif;display:grid;place-items:center;padding:18px}.panel{width:min(100%,620px);background:#151925;border:1px solid #30384b;border-radius:20px;padding:22px;box-shadow:0 18px 60px #0008}h1{margin:10px 0 6px;font-size:24px}.muted{color:#b9c0d0;line-height:1.5}.pill{display:inline-block;padding:6px 10px;border-radius:99px;background:#302718;color:#ffd47a;font-size:11px;font-weight:800;letter-spacing:.04em}.btn{width:100%;border:0;border-radius:12px;padding:15px;background:#f2c94c;color:#151515;font-weight:800;font-size:16px;margin-top:14px}.btn:disabled{opacity:.55}.row{display:grid;grid-template-columns:minmax(130px, .8fr) minmax(0,1.2fr);gap:12px;padding:12px 0;border-bottom:1px solid #30384b}.row span:first-child{color:#aeb7c9}.value{font-family:ui-monospace,monospace;text-align:right;overflow-wrap:anywhere}.status{margin-top:16px;padding:13px;border-radius:12px;background:#20283a;color:#d9e2f7;white-space:pre-wrap;line-height:1.5}.section{margin-top:20px;font-weight:800}.good{color:#8fe0ad}.bad{color:#ff9a9a}.warn{color:#ffd47a}.small{font-size:12px;color:#9ba5b8;line-height:1.5}.warning{margin-top:18px;border:1px solid #775a2b;background:#2a2115;padding:13px;border-radius:12px;color:#f5d69b;line-height:1.5}
 </style>
 </head>
 <body><main class="panel">
-<span class="pill">PRE-FLIGHT ONLY · NO TRANSACTION</span>
-<h1>Pluto (PLT) supply check</h1>
-<p>This separate page checks the PLT mint and the connected wallet before any burn is prepared. It cannot transfer or burn tokens.</p>
+<span class="pill">READ-ONLY PREFLIGHT · NO TRANSACTION</span>
+<h1>Pluto (PLT) independent verification</h1>
+<p class="muted">This page independently reads the mint account and every PLT token account owned by the connected wallet. It does not create, sign, simulate, or send a transaction.</p>
 <div class="row"><span>PLT mint</span><span class="value">AfrUBKBsrsfFahfGuafChr37tBkkKJpPWdeXj86j2r8m</span></div>
 <div class="row"><span>Expected owner</span><span class="value">7ZPDk8A6ziuKpbfrXnuUUiJ3TP9aFUq5ETAADE6A6sqE</span></div>
+<div class="row"><span>Expected sponsor / fee payer</span><span class="value">4C66bKRcWfXQDaz6Kw32pnz3aiPvN2JrvG9MjDWkar2i</span></div>
 <div class="row"><span>Target remaining</span><span class="value">3,000,000,000 PLT</span></div>
-<div class="row"><span>Planned burn</span><span class="value">299,997,000,000,000 PLT</span></div>
-<button class="btn" id="connect">Connect Phantom</button>
-<div class="status" id="status" role="status">Waiting for wallet connection.</div>
+<div class="row"><span>Proposed burn amount</span><span class="value">299,997,000,000,000 PLT</span></div>
+<button class="btn" id="connect">Connect owner wallet & verify</button>
+<div class="status" id="status" role="status">Waiting for wallet connection. No wallet action occurs until you tap the button.</div>
 <div id="details" hidden>
+<div class="section">On-chain account facts</div>
 <div class="row"><span>Connected wallet</span><span class="value" id="wallet"></span></div>
+<div class="row"><span>Mint account owner / token program</span><span class="value" id="program"></span></div>
+<div class="row"><span>Mint authority</span><span class="value" id="mintAuthority"></span></div>
+<div class="row"><span>Freeze authority</span><span class="value" id="freezeAuthority"></span></div>
 <div class="row"><span>Mint supply</span><span class="value" id="supply"></span></div>
 <div class="row"><span>Decimals</span><span class="value" id="decimals"></span></div>
-<div class="row"><span>PLT in your wallet</span><span class="value" id="balance"></span></div>
+<div class="row"><span>PLT token accounts found</span><span class="value" id="accountCount"></span></div>
+<div class="row"><span>Total PLT in owner wallet</span><span class="value" id="balance"></span></div>
+<div class="row"><span>Owner token-account check</span><span class="value" id="ownerCheck"></span></div>
+<div class="section">Fee-payer / signing readiness</div>
+<div class="row"><span>Owner wallet signing API</span><span class="value" id="ownerSigner"></span></div>
+<div class="row"><span>Sponsor address configured</span><span class="value" id="sponsorCheck"></span></div>
+<div class="row"><span>Two-party transaction signatures</span><span class="value warn">NOT TESTED — signing disabled</span></div>
 </div>
-<div class="warning"><b>Safety:</b> Never enter or share your recovery phrase or private key. This page will not ask for them. No transaction is being signed or sent. The supply and wallet balances must be verified before proceeding.</div>
-<p class="small">Network: Solana Mainnet. RPC data is read-only. If Phantom is not detected, open this HTTPS page inside Phantom's in-app browser.</p>
+<div class="warning"><b>Safety lock:</b> This page never requests a transaction signature and never broadcasts a transaction. The mint authority may be null or controlled by another wallet; that does not by itself prevent a holder-authorized SPL token burn. The owner must authorize the burn, while the sponsor must separately authorize the fee payment. Never enter or share a recovery phrase or private key.</div>
+<p class="small">Network: Solana Mainnet. RPC reads use the isolated Pluto RPC proxy. Open this HTTPS page inside Phantom's in-app browser if Phantom is not detected.</p>
 </main>
 <script>
+'use strict';
 const MINT='AfrUBKBsrsfFahfGuafChr37tBkkKJpPWdeXj86j2r8m';
 const OWNER='7ZPDk8A6ziuKpbfrXnuUUiJ3TP9aFUq5ETAADE6A6sqE';
+const SPONSOR='4C66bKRcWfXQDaz6Kw32pnz3aiPvN2JrvG9MjDWkar2i';
+const TOKEN='TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+const TOKEN_2022='TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb';
+const EXPECTED_SUPPLY='3000000000000000000';
+const EXPECTED_BALANCE='2999970000000000000';
 const RPC_URL='https://pluto-burn-rpc.onrender.com/rpc';
 const $=id=>document.getElementById(id);
-async function rpc(method,params){const r=await fetch(RPC_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});if(!r.ok)throw Error('Solana RPC proxy returned HTTP '+r.status);const j=await r.json();if(j.error)throw Error(j.error.message||'RPC error');return j.result;}
+function fmt(raw,decimals){const n=BigInt(raw),d=10n**BigInt(decimals);const whole=n/d,frac=(n%d).toString().padStart(decimals,'0').replace(/0+$/,'');return whole.toLocaleString('en-US')+(frac?'.'+frac:'')+' PLT';}
+async function rpc(method,params){const r=await fetch(RPC_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:Date.now(),method,params})});if(!r.ok)throw Error('RPC proxy HTTP '+r.status);const j=await r.json();if(j.error)throw Error(j.error.message||'RPC error');return j.result;}
+function set(id,value,cls){$(id).textContent=value;if(cls)$ (id).className='value '+cls;}
 $('connect').addEventListener('click',async()=>{
- $('connect').disabled=true;$('status').textContent='Checking for Phantom…';
+ const button=$('connect');button.disabled=true;$('status').textContent='Connecting to Phantom…';
+ $('details').hidden=true;
  try{
   const provider=window.phantom?.solana||window.solana;
   if(!provider?.isPhantom)throw Error('Phantom was not detected. Open this page in Phantom’s in-app browser.');
-  const resp=await provider.connect();const address=resp.publicKey?.toString()||provider.publicKey?.toString();
+  if(typeof provider.connect!=='function')throw Error('Phantom connection API is unavailable.');
+  const resp=await provider.connect({onlyIfTrusted:false});
+  const address=resp.publicKey?.toString()||provider.publicKey?.toString();
   if(!address)throw Error('Wallet connection returned no public key.');
   $('wallet').textContent=address;
-  if(address!==OWNER)throw Error('Connected wallet does not match the expected Pluto owner wallet. Disconnect and choose the correct Phantom account.');
-  $('status').textContent='Wallet matched. Reading mint and token account data…';
-  const [mintInfo,accounts]=await Promise.all([
-   rpc('getTokenSupply',[MINT,{commitment:'confirmed'}]),
-   rpc('getTokenAccountsByOwner',[address,{mint:MINT},{encoding:'jsonParsed',commitment:'confirmed'}])
+  if(address!==OWNER)throw Error('Connected wallet does not match the configured Pluto owner wallet. No checks or transactions were run.');
+  $('status').textContent='Owner matched. Reading mint account and token accounts independently…';
+  const [mintAccount,tokenAccounts]=await Promise.all([
+   rpc('getAccountInfo',[MINT,{encoding:'jsonParsed',commitment:'finalized'}]),
+   rpc('getTokenAccountsByOwner',[address,{mint:MINT},{encoding:'jsonParsed',commitment:'finalized'}])
   ]);
-  const decimals=mintInfo.value.decimals;
-  const supply=Number(mintInfo.value.uiAmountString);
-  const rawBalance=accounts.value.reduce((sum,a)=>sum+BigInt(a.account.data.parsed.info.tokenAmount.amount),0n);const bal=Number(rawBalance)/10**decimals;
-  $('supply').textContent=Number.isFinite(supply)?supply.toLocaleString('en-US')+' PLT':mintInfo.value.amount;
+  if(!mintAccount?.value)throw Error('Mint account was not found on Solana mainnet.');
+  const info=mintAccount.value, parsed=info.data?.parsed?.info;
+  if(!parsed||parsed.type!=='mint')throw Error('RPC did not return a parsed mint account. Cannot verify safely.');
+  const program=info.owner;
+  if(program!==TOKEN&&program!==TOKEN_2022)throw Error('Mint account owner is not a recognized SPL Token or Token-2022 program: '+program);
+  const decimals=parsed.decimals;
+  const supply=String(parsed.supply);
+  const rows=tokenAccounts.value||[];
+  let total=0n, allOwnersCorrect=true, allProgramsCorrect=true;
+  for(const item of rows){
+   const ai=item.account?.data?.parsed?.info;
+   if(!ai||ai.mint!==MINT)throw Error('A returned token account has unexpected or missing parsed mint data.');
+   if(ai.owner!==address)allOwnersCorrect=false;
+   if(item.account.owner!==program)allProgramsCorrect=false;
+   total+=BigInt(ai.tokenAmount.amount);
+  }
+  $('program').textContent=program+(program===TOKEN?' (SPL Token)': ' (Token-2022)');
+  $('mintAuthority').textContent=parsed.mintAuthority||'None (revoked)';
+  $('freezeAuthority').textContent=parsed.freezeAuthority||'None (revoked)';
+  $('supply').textContent=fmt(supply,decimals);
   $('decimals').textContent=String(decimals);
-  $('balance').textContent=bal.toLocaleString('en-US')+' PLT';
+  $('accountCount').textContent=String(rows.length);
+  $('balance').textContent=fmt(total.toString(),decimals);
+  $('ownerCheck').textContent=allOwnersCorrect&&allProgramsCorrect?'PASS — all returned accounts match owner and program':'FAIL — owner or token-program mismatch';
+  $('ownerSigner').textContent=typeof provider.signTransaction==='function'?'Wallet API exposes signTransaction (not invoked)':'FAIL — signTransaction unavailable';
+  $('sponsorCheck').textContent=SPONSOR.length===44?'Configured: '+SPONSOR:'FAIL — sponsor address format invalid';
   $('details').hidden=false;
-  if(decimals!==4)throw Error('Decimals mismatch: expected 4, RPC reports '+decimals+'. Stop here.');
-  if(mintInfo.value.amount!=='3000000000000000000')throw Error('Mint raw supply differs from the expected 300 trillion PLT at 4 decimals. Stop here; do not burn.');
-  if(rawBalance<2999970000000000000n)throw Error('This wallet does not hold enough PLT for the proposed burn. Stop here.');
-  $('status').textContent='Pre-flight checks passed. No transaction was created, signed, or sent. Next we must independently verify the mint authority, token program, and fee-payer signing flow before any burn.';
- }catch(e){$('status').textContent=e.message||String(e);}
- finally{$('connect').disabled=false;}
+  const failures=[];
+  if(decimals!==4)failures.push('Decimals are '+decimals+', expected 4.');
+  if(supply!==EXPECTED_SUPPLY)failures.push('Mint raw supply does not match the expected 300 trillion PLT.');
+  if(total.toString()!==EXPECTED_BALANCE)failures.push('Owner raw balance does not exactly match the expected 299,997,000,000,000 PLT.');
+  if(!allOwnersCorrect||!allProgramsCorrect)failures.push('One or more token accounts failed owner/program validation.');
+  if(typeof provider.signTransaction!=='function')failures.push('Owner wallet transaction-signing API is unavailable.');
+  if(failures.length){$('status').textContent='VERIFICATION FAILED — STOP.\n'+failures.join('\n')+'\nNo transaction was created, signed, simulated, or sent.';return;}
+  $('status').textContent='READ-ONLY ON-CHAIN CHECKS PASSED.\nMint account, token program, authorities, decimals, supply, and owner token-account balance were read from finalized RPC data.\n\nFEE-PAYER SIGNING IS NOT YET VERIFIED: this page has not connected the sponsor wallet, constructed a burn transaction, requested either signature, or tested a two-signature message. Do not proceed to a burn based on this page alone.\n\nNo transaction was created, signed, simulated, or sent.';
+ }catch(e){$('status').textContent='CHECK FAILED — STOP.\n'+(e.message||String(e))+'\nNo transaction was created, signed, simulated, or sent.';}
+ finally{button.disabled=false;}
 });
 </script></body></html>
