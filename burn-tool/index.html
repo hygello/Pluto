@@ -50,6 +50,20 @@ const RPC_URL='https://pluto-burn-rpc.onrender.com/rpc';
 const $=id=>document.getElementById(id);
 function fmt(raw,decimals){const n=BigInt(raw),d=10n**BigInt(decimals);const whole=n/d,frac=(n%d).toString().padStart(decimals,'0').replace(/0+$/,'');return whole.toLocaleString('en-US')+(frac?'.'+frac:'')+' PLT';}
 async function rpc(method,params){const r=await fetch(RPC_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:Date.now(),method,params})});if(!r.ok)throw Error('RPC proxy HTTP '+r.status);const j=await r.json();if(j.error)throw Error(j.error.message||'RPC error');return j.result;}
+function b58(bytes){const alphabet='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';let n=0n;for(const b of bytes)n=(n<<8n)+BigInt(b);let out='';while(n>0n){const r=Number(n%58n);out=alphabet[r]+out;n/=58n;}for(const b of bytes){if(b!==0)break;out='1'+out;}return out||'1';}
+function decodeMintAccount(account){
+ const raw=account?.data;
+ if(!Array.isArray(raw)||typeof raw[0]!=='string'||raw[1]!=='base64')throw Error('Raw mint account data is missing or not base64.');
+ const bytes=Uint8Array.from(atob(raw[0]),ch=>ch.charCodeAt(0));
+ if(bytes.length<82)throw Error('Mint account data is shorter than the 82-byte SPL mint layout.');
+ const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+ const option=(offset)=>{const tag=view.getUint32(offset,true);if(tag===0)return null;if(tag!==1)throw Error('Invalid COption tag in mint account bytes.');return b58(bytes.slice(offset+4,offset+36));};
+ const supply=view.getBigUint64(36,true).toString();
+ const decimals=bytes[44];
+ const initialized=bytes[45]===1;
+ if(!initialized)throw Error('Mint account is not initialized.');
+ return {type:'mint',mintAuthority:option(0),supply,decimals,freezeAuthority:option(46)};
+}
 function set(id,value,cls){$(id).textContent=value;if(cls)$ (id).className='value '+cls;}
 $('connect').addEventListener('click',async()=>{
  const button=$('connect');button.disabled=true;$('status').textContent='Connecting to Phantom…';
@@ -65,12 +79,11 @@ $('connect').addEventListener('click',async()=>{
   if(address!==OWNER)throw Error('Connected wallet does not match the configured Pluto owner wallet. No checks or transactions were run.');
   $('status').textContent='Owner matched. Reading mint account and token accounts independently…';
   const [mintAccount,tokenAccounts]=await Promise.all([
-   rpc('getAccountInfo',[MINT,{encoding:'jsonParsed',commitment:'finalized'}]),
+   rpc('getAccountInfo',[MINT,{encoding:'base64',commitment:'finalized'}]),
    rpc('getTokenAccountsByOwner',[address,{mint:MINT},{encoding:'jsonParsed',commitment:'finalized'}])
   ]);
   if(!mintAccount?.value)throw Error('Mint account was not found on Solana mainnet.');
-  const info=mintAccount.value, parsed=info.data?.parsed?.info;
-  if(!parsed||parsed.type!=='mint')throw Error('RPC did not return a parsed mint account. Cannot verify safely.');
+  const info=mintAccount.value, parsed=decodeMintAccount(info);
   const program=info.owner;
   if(program!==TOKEN&&program!==TOKEN_2022)throw Error('Mint account owner is not a recognized SPL Token or Token-2022 program: '+program);
   const decimals=parsed.decimals;
