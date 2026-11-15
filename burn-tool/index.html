@@ -32,6 +32,7 @@
 <div class="section">Fee-payer / signing readiness</div>
 <div class="row"><span>Owner wallet signing API</span><span class="value" id="ownerSigner"></span></div>
 <div class="row"><span>Sponsor address configured</span><span class="value" id="sponsorCheck"></span></div>
+<div class="row"><span>Sponsor SOL balance (finalized)</span><span class="value" id="sponsorBalance">Not checked</span></div>
 <div class="row"><span>Two-party transaction signatures</span><span class="value warn">NOT TESTED — signing disabled</span></div>
 </div>
 <div class="warning"><b>Safety lock:</b> This page never requests a transaction signature and never broadcasts a transaction. The mint authority may be null or controlled by another wallet; that does not by itself prevent a holder-authorized SPL token burn. The owner must authorize the burn, while the sponsor must separately authorize the fee payment. Never enter or share a recovery phrase or private key.</div>
@@ -82,6 +83,8 @@ $('connect').addEventListener('click',async()=>{
    rpc('getAccountInfo',[MINT,{encoding:'base64',commitment:'finalized'}]),
    rpc('getTokenAccountsByOwner',[address,{mint:MINT},{encoding:'jsonParsed',commitment:'finalized'}])
   ]);
+  let sponsorBalanceText='Unavailable — balance read failed';
+  try{const sponsorBalance=await rpc('getBalance',[SPONSOR,{commitment:'finalized'}]);sponsorBalanceText=(Number(sponsorBalance.value)/1e9).toFixed(9)+' SOL';}catch(e){sponsorBalanceText='Unavailable — '+(e.message||'RPC read failed');}
   if(!mintAccount?.value)throw Error('Mint account was not found on Solana mainnet.');
   const info=mintAccount.value, parsed=decodeMintAccount(info);
   const program=info.owner;
@@ -107,6 +110,7 @@ $('connect').addEventListener('click',async()=>{
   $('ownerCheck').textContent=allOwnersCorrect&&allProgramsCorrect?'PASS — all returned accounts match owner and program':'FAIL — owner or token-program mismatch';
   $('ownerSigner').textContent=typeof provider.signTransaction==='function'?'Wallet API exposes signTransaction (not invoked)':'FAIL — signTransaction unavailable';
   $('sponsorCheck').textContent=SPONSOR.length===44?'Configured: '+SPONSOR:'FAIL — sponsor address format invalid';
+  $('sponsorBalance').textContent=sponsorBalanceText;
   $('details').hidden=false;
   const failures=[];
   if(decimals!==4)failures.push('Decimals are '+decimals+', expected 4.');
