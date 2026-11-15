@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pluto PLT Supply Check</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#090b12;color:#f4f5fa;font:16px system-ui,-apple-system,Segoe UI,sans-serif;display:grid;place-items:center;padding:22px}.panel{width:min(100%,520px);background:#151925;border:1px solid #30384b;border-radius:22px;padding:25px;box-shadow:0 18px 60px #0008}h1{margin:0 0 8px;font-size:25px}p{color:#b9c0d0;line-height:1.55}.pill{display:inline-block;padding:6px 10px;border-radius:99px;background:#302718;color:#ffd47a;font-size:12px;font-weight:700;letter-spacing:.04em}.btn{width:100%;border:0;border-radius:12px;padding:15px;background:#f2c94c;color:#151515;font-weight:800;font-size:16px;margin-top:12px}.row{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid #30384b}.row span:first-child{color:#aeb7c9}.value{font-family:ui-monospace,monospace;text-align:right;overflow-wrap:anywhere}.status{margin-top:16px;padding:12px;border-radius:12px;background:#20283a;color:#d9e2f7;white-space:pre-wrap}.small{font-size:12px;color:#9ba5b8}.warning{margin-top:18px;border:1px solid #775a2b;background:#2a2115;padding:13px;border-radius:12px;color:#f5d69b;line-height:1.5}
+</style>
+</head>
+<body><main class="panel">
+<span class="pill">PRE-FLIGHT ONLY · NO TRANSACTION</span>
+<h1>Pluto (PLT) supply check</h1>
+<p>This separate page checks the PLT mint and the connected wallet before any burn is prepared. It cannot transfer or burn tokens.</p>
+<div class="row"><span>PLT mint</span><span class="value">AfrUBKBsrsfFahfGuafChr37tBkkKJpPWdeXj86j2r8m</span></div>
+<div class="row"><span>Expected owner</span><span class="value">7ZPDk8A6ziuKpbfrXnuUUiJ3TP9aFUq5ETAADE6A6sqE</span></div>
+<div class="row"><span>Target remaining</span><span class="value">3,000,000,000 PLT</span></div>
+<div class="row"><span>Planned burn</span><span class="value">299,997,000,000,000 PLT</span></div>
+<button class="btn" id="connect">Connect Phantom</button>
+<div class="status" id="status" role="status">Waiting for wallet connection.</div>
+<div id="details" hidden>
+<div class="row"><span>Connected wallet</span><span class="value" id="wallet"></span></div>
+<div class="row"><span>Mint supply</span><span class="value" id="supply"></span></div>
+<div class="row"><span>Decimals</span><span class="value" id="decimals"></span></div>
+<div class="row"><span>PLT in your wallet</span><span class="value" id="balance"></span></div>
+</div>
+<div class="warning"><b>Safety:</b> Never enter or share your recovery phrase or private key. This page will not ask for them. No transaction is being signed or sent. The supply and wallet balances must be verified before proceeding.</div>
+<p class="small">Network: Solana Mainnet. RPC data is read-only. If Phantom is not detected, open this HTTPS page inside Phantom's in-app browser.</p>
+</main>
+<script>
+const MINT='AfrUBKBsrsfFahfGuafChr37tBkkKJpPWdeXj86j2r8m';
+const OWNER='7ZPDk8A6ziuKpbfrXnuUUiJ3TP9aFUq5ETAADE6A6sqE';
+const RPC='https://api.mainnet-beta.solana.com';
+const $=id=>document.getElementById(id);
+async function rpc(method,params){const r=await fetch(RPC,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});if(!r.ok)throw Error('Solana RPC request failed ('+r.status+')');const j=await r.json();if(j.error)throw Error(j.error.message||'RPC error');return j.result;}
+$('connect').addEventListener('click',async()=>{
+ $('connect').disabled=true;$('status').textContent='Checking for Phantom…';
+ try{
+  const provider=window.phantom?.solana||window.solana;
+  if(!provider?.isPhantom)throw Error('Phantom was not detected. Open this page in Phantom’s in-app browser.');
+  const resp=await provider.connect();const address=resp.publicKey?.toString()||provider.publicKey?.toString();
+  if(!address)throw Error('Wallet connection returned no public key.');
+  $('wallet').textContent=address;
+  if(address!==OWNER)throw Error('Connected wallet does not match the expected Pluto owner wallet. Disconnect and choose the correct Phantom account.');
+  $('status').textContent='Wallet matched. Reading mint and token account data…';
+  const [mintInfo,accounts]=await Promise.all([
+   rpc('getTokenSupply',[MINT,{commitment:'confirmed'}]),
+   rpc('getTokenAccountsByOwner',[address,{mint:MINT},{encoding:'jsonParsed',commitment:'confirmed'}])
+  ]);
+  const decimals=mintInfo.value.decimals;
+  const supply=Number(mintInfo.value.uiAmountString);
+  const bal=accounts.value.reduce((sum,a)=>sum+Number(a.account.data.parsed.info.tokenAmount.uiAmountString||0),0);
+  $('supply').textContent=Number.isFinite(supply)?supply.toLocaleString('en-US')+' PLT':mintInfo.value.amount;
+  $('decimals').textContent=String(decimals);
+  $('balance').textContent=bal.toLocaleString('en-US')+' PLT';
+  $('details').hidden=false;
+  if(decimals!==4)throw Error('Decimals mismatch: expected 4, RPC reports '+decimals+'. Stop here.');
+  if(mintInfo.value.amount!=='3000000000000000000')throw Error('Mint raw supply differs from the expected 300 trillion PLT at 4 decimals. Stop here; do not burn.');
+  if(bal<299997000000000)throw Error('This wallet does not hold enough PLT for the proposed burn. Stop here.');
+  $('status').textContent='Pre-flight checks passed. No transaction was created, signed, or sent. Next we must independently verify the mint authority, token program, and fee-payer signing flow before any burn.';
+ }catch(e){$('status').textContent=e.message||String(e);}
+ finally{$('connect').disabled=false;}
+});
+</script></body></html>
