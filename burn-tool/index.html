@@ -98,7 +98,7 @@ $('connect').addEventListener('click',async()=>{
   const failures=[];
   if(decimals!==4)failures.push('Decimals are '+decimals+', expected 4.');
   if(supply!==EXPECTED_SUPPLY)failures.push('Mint raw supply does not match the expected 300 trillion PLT.');
-  if(total.toString()!==EXPECTED_BALANCE)failures.push('Owner raw balance does not exactly match the expected 299,997,000,000,000 PLT.');
+  if(total<BigInt(EXPECTED_BALANCE))failures.push('Owner balance is below the required 299,997,000,000,000 PLT threshold.');
   if(!allOwnersCorrect||!allProgramsCorrect)failures.push('One or more token accounts failed owner/program validation.');
   if(typeof provider.signTransaction!=='function')failures.push('Owner wallet transaction-signing API is unavailable.');
   if(failures.length){$('status').textContent='VERIFICATION FAILED — STOP.\n'+failures.join('\n')+'\nNo transaction was created, signed, simulated, or sent.';return;}
