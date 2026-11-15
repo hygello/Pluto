@@ -48,7 +48,8 @@ async function health(res) {
 
 const server = http.createServer(async (req, res) => {
   const origin = req.headers.origin || '';
-  const pathname = new URL(req.url, 'http://localhost').pathname.replace(/\\/+$/, '') || '/';
+  let pathname = new URL(req.url, 'http://localhost').pathname || '/';
+  while (pathname.length > 1 && pathname.endsWith('/')) pathname = pathname.slice(0, -1);
 
   if (origin === ALLOWED_ORIGIN) {
     res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
