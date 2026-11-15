@@ -29,9 +29,9 @@
 <script>
 const MINT='AfrUBKBsrsfFahfGuafChr37tBkkKJpPWdeXj86j2r8m';
 const OWNER='7ZPDk8A6ziuKpbfrXnuUUiJ3TP9aFUq5ETAADE6A6sqE';
-const RPC='https://api.mainnet-beta.solana.com';
+const RPCS=['https://solana-rpc.publicnode.com','https://api.mainnet-beta.solana.com'];
 const $=id=>document.getElementById(id);
-async function rpc(method,params){const r=await fetch(RPC,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});if(!r.ok)throw Error('Solana RPC request failed ('+r.status+')');const j=await r.json();if(j.error)throw Error(j.error.message||'RPC error');return j.result;}
+async function rpc(method,params){let last;for(const endpoint of RPCS){try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});if(!r.ok)throw Error('RPC '+endpoint+' returned HTTP '+r.status);const j=await r.json();if(j.error)throw Error(j.error.message||'RPC error');return j.result;}catch(e){last=e;}}throw Error('Both public Solana RPC endpoints failed: '+(last?.message||'unknown error'));}
 $('connect').addEventListener('click',async()=>{
  $('connect').disabled=true;$('status').textContent='Checking for Phantom…';
  try{
@@ -48,14 +48,14 @@ $('connect').addEventListener('click',async()=>{
   ]);
   const decimals=mintInfo.value.decimals;
   const supply=Number(mintInfo.value.uiAmountString);
-  const bal=accounts.value.reduce((sum,a)=>sum+Number(a.account.data.parsed.info.tokenAmount.uiAmountString||0),0);
+  const rawBalance=accounts.value.reduce((sum,a)=>sum+BigInt(a.account.data.parsed.info.tokenAmount.amount),0n);const bal=Number(rawBalance)/10**decimals;
   $('supply').textContent=Number.isFinite(supply)?supply.toLocaleString('en-US')+' PLT':mintInfo.value.amount;
   $('decimals').textContent=String(decimals);
   $('balance').textContent=bal.toLocaleString('en-US')+' PLT';
   $('details').hidden=false;
   if(decimals!==4)throw Error('Decimals mismatch: expected 4, RPC reports '+decimals+'. Stop here.');
   if(mintInfo.value.amount!=='3000000000000000000')throw Error('Mint raw supply differs from the expected 300 trillion PLT at 4 decimals. Stop here; do not burn.');
-  if(bal<299997000000000)throw Error('This wallet does not hold enough PLT for the proposed burn. Stop here.');
+  if(rawBalance<2999970000000000000n)throw Error('This wallet does not hold enough PLT for the proposed burn. Stop here.');
   $('status').textContent='Pre-flight checks passed. No transaction was created, signed, or sent. Next we must independently verify the mint authority, token program, and fee-payer signing flow before any burn.';
  }catch(e){$('status').textContent=e.message||String(e);}
  finally{$('connect').disabled=false;}
