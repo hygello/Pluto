@@ -7,7 +7,7 @@ const UPSTREAMS = [
   'https://solana-rpc.publicnode.com'
 ];
 const ALLOWED_METHODS = new Set([
-  'getVersion','getSlot','getBlockHeight','getAccountInfo','getTokenSupply',
+  'getVersion','getSlot','getBlockHeight','getAccountInfo','getTokenSupply','getBalance',
   'getTokenAccountsByOwner','getLatestBlockhash','getFeeForMessage',
   'getMinimumBalanceForRentExemption','simulateTransaction','sendTransaction',
   'getSignatureStatuses'
